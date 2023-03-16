@@ -1,11 +1,8 @@
 import pandas as pd 
 import openpyxl
-import xlsx2html
-import pyperclip
 from openpyxl import Workbook 
 from openpyxl.styles import Font, Alignment 
 from openpyxl.styles import PatternFill
-from fpdf import FPDF
 from openpyxl import load_workbook
 from openpyxl.worksheet.page import PageMargins
 from openpyxl.utils import get_column_letter
@@ -16,7 +13,7 @@ from reportlab.pdfgen import canvas
 
 
 # Leer el archivo CSV
-df = pd.read_csv('ReporteOAGUS_20230305.csv')
+df = pd.read_csv('ReporteOAGUS_20230312.csv')
 
 # Crear un nuevo libro de trabajo de Excel
 wb = Workbook()
@@ -39,7 +36,7 @@ ws.column_dimensions['K'].width = 5     #COLUMNA 8
 ws.column_dimensions['L'].width = 5     #COLUMNA 9
 ws.column_dimensions['M'].width = 5     #COLUMNA 10
 ws.column_dimensions['N'].width = 6     #COLUMNA 11
-ws.column_dimensions['O'].width = 10    #COLUMNA 12
+ws.column_dimensions['O'].width = 8    #COLUMNA 12
 ws.column_dimensions['P'].width = 10    #COLUMNA 13
 
 # Establecer la altura deseada en la fila y columna especificada
@@ -56,27 +53,37 @@ cell_alignment = Alignment(horizontal='left', vertical='center')
 # Crear una lista con los nombres de las cabeceras
 cabeceras = ['CA', 'Market', 'Ind AM', 'Region', 'Month', 'Chg', 'Prev Ops', 'New Ops', 'Ops Chg', 'Prev Seat', 'New Seat', 'Sea Chg', '%_Seat Chg']
 
-# Seleccionar una celda
-cell = ws['J1']
-
-# Configurar el formato de la celda
-cell.alignment = openpyxl.styles.Alignment(wrap_text=True)
-
-
-# Escribir los encabezados
-#headers = list(df.columns)
 headers = cabeceras                             #Indico el número de columna a iniciar las cabeceras.
 for col_num, header_title in enumerate(headers, 4):
     cell = ws.cell(row=1, column=col_num, value=header_title)
     cell.font = header_font
     cell.alignment = header_alignment
 
+
+
+# Justifica el texto de los encabezados
+for cell in ws[1]:
+    cell.alignment = Alignment(horizontal='center', vertical='center', wrap_text=True)
+    
+
 # Escribir los datos                
-for row_num, row_data in enumerate(df.values, 4):
+for row_num, row_data in enumerate(df.values, 2):
     for col_num, cell_value in enumerate(row_data, 3):
         cell = ws.cell(row=row_num, column=col_num, value=cell_value)
         cell.font = cell_font
         cell.alignment = cell_alignment
+
+
+
+
+
+
+
+
+
+
+
+
 
 # Cambiar el color de la celda A1 a rojo
 
@@ -93,12 +100,12 @@ for row_num, row_data in enumerate(df.values, 4):
 
 
 # Seleccionar las celdas que se van a ajustar
-cell_range = ws['I1:M1']
+#cell_range = ws['I1:M1']
 
 # Ajustar el ancho de las columnas para que el texto quepa
-for row in cell_range:
-    for cell in row:
-        ws.column_dimensions[cell.column_letter].width = len(str(cell.value))
+#for row in cell_range:
+ #   for cell in row:
+  #      ws.column_dimensions[cell.column_letter].width = len(str(cell.value))
 
 
 # definir los colores para los renglones
@@ -115,6 +122,30 @@ for idx, row in enumerate(ws.iter_rows(),4):
         cell.fill = fill
 
 
+# Establecer color de relleno para los encabezados
+fill = PatternFill(start_color='BFBFBF', end_color='BFBFBF', fill_type='solid')
+
+# Justifica el texto de los encabezados
+for cell in ws[1]:
+    cell.fill = fill    #Agrego el color de relleno en el renglon 1
+
+
+# Buscar la celda que contiene la palabra "TOTAL"
+#for fila in ws.rows:
+ #   for celda in fila:
+  #      if celda.value == 'TOTAL':
+            # Obtener la fila donde se encuentra la celda
+   #         fila_total = celda.row
+            # Poner el texto en negrita en toda la fila
+    #        for celda_en_fila in ws[f'A{fila_total}:Z{fila_total}']:
+     #           for celda_individual in celda_en_fila:
+      #              celda_individual.font = openpyxl.styles.Font(bold=True)
+
+
+
+
+
+#Convirtiendo a Decimales
 # Selecciona la columna que deseas convertir (por ejemplo, columna A)
 columna = ws['P']
 
@@ -126,46 +157,35 @@ for celda in columna:
 
 
 
+# Crea un objeto estilo para aplicar a la columna 'N'
+font = Font(color='FF0000')
+fill = PatternFill(start_color='FFC7CE', end_color='FFC7CE', fill_type='solid')
 
+# Itera sobre cada fila de la columna 'M'
+for index, row in df.iterrows():
+    if row['M'] < 0:  # Si el valor en la columna 'M' es negativo
+        # Aplica el formato deseado a la celda en la columna 'N'
+        cell = f'{get_column_letter(df.columns.get_loc("N") + 1)}{index + 1}'
+        df.loc[index, 'N'] = f'({abs(row["N"])}%)'
+        df[cell].font = font
+        df[cell].fill = fill
+
+# Guarda el archivo xlsx con los cambios realizados
+df.to_excel('tu_archivo_modificado.xlsx', index=False)
 
 # Indicar el número de columna que deseas eliminar
 num_columna = 3
+num_columna17 = 17
+num_columna18 = 16
+num_columna19 = 15
 
-# Eliminar la columna
+# Eliminar la columnas
 ws.delete_cols(num_columna)
-
+ws.delete_cols(num_columna17)
+ws.delete_cols(num_columna18)
+ws.delete_cols(num_columna19)
 
 # Guardar el archivo
 wb.save('archivo.xlsx')
 
-# Abre el archivo XLSX y selecciona la hoja de trabajo
-wb = openpyxl.load_workbook('archivo.xlsx')
-ws = wb.active
 
-# Configura los márgenes de la página
-ws.page_margins = PageMargins(left=0.25, right=0.25, top=0.75, bottom=0.75, header=0.3, footer=0.3)
-
-# Crea un archivo PDF
-pdf_filename = 'nombre_del_archivo.pdf'
-pdf = canvas.Canvas(pdf_filename, pagesize=letter)
-
-# Define las dimensiones de la página PDF
-pdf_width, pdf_height = letter
-
-# Itera a través de todas las filas y columnas de la hoja de trabajo
-for row in range(1, ws.max_row + 1):
-    for col in range(1, ws.max_column + 1):
-        # Obtiene la letra de la columna actual
-        col_letter = get_column_letter(col)
-
-        # Obtiene el valor de la celda
-        cell_value = ws['{}{}'.format(col_letter, row)].value
-
-        # Escribe el valor de la celda en el archivo PDF
-        pdf.drawString((col-1)*2.5*inch, pdf_height-(row*0.35*inch), str(cell_value))
-
-# Guarda el archivo PDF
-pdf.save()
-
-# Cierra el archivo XLSX
-wb.close()
