@@ -54,7 +54,7 @@ cell_alignment = Alignment(horizontal='left', vertical='center')
 cabeceras = ['CA', 'Market', 'Ind AM', 'Region', 'Month', 'Chg', 'Prev Ops', 'New Ops', 'Ops Chg', 'Prev Seat', 'New Seat', 'Sea Chg', '%_Seat Chg']
 
 headers = cabeceras                             #Indico el número de columna a iniciar las cabeceras.
-for col_num, header_title in enumerate(headers, 4):
+for col_num, header_title in enumerate(headers, 3):
     cell = ws.cell(row=1, column=col_num, value=header_title)
     cell.font = header_font
     cell.alignment = header_alignment
@@ -68,12 +68,10 @@ for cell in ws[1]:
 
 # Escribir los datos                
 for row_num, row_data in enumerate(df.values, 2):
-    for col_num, cell_value in enumerate(row_data, 3):
+    for col_num, cell_value in enumerate(row_data, 2):
         cell = ws.cell(row=row_num, column=col_num, value=cell_value)
         cell.font = cell_font
         cell.alignment = cell_alignment
-
-
 
 
 
@@ -147,7 +145,7 @@ for cell in ws[1]:
 
 #Convirtiendo a Decimales
 # Selecciona la columna que deseas convertir (por ejemplo, columna A)
-columna = ws['P']
+columna = ws['O']
 
 # Itera sobre las celdas en la columna y convierte los valores de decimal a porcentaje
 for celda in columna:
@@ -157,30 +155,18 @@ for celda in columna:
 
 
 
-# Crea un objeto estilo para aplicar a la columna 'N'
-font = Font(color='FF0000')
-fill = PatternFill(start_color='FFC7CE', end_color='FFC7CE', fill_type='solid')
-
-# Itera sobre cada fila de la columna 'M'
-for index, row in df.iterrows():
-    if row['M'] < 0:  # Si el valor en la columna 'M' es negativo
-        # Aplica el formato deseado a la celda en la columna 'N'
-        cell = f'{get_column_letter(df.columns.get_loc("N") + 1)}{index + 1}'
-        df.loc[index, 'N'] = f'({abs(row["N"])}%)'
-        df[cell].font = font
-        df[cell].fill = fill
-
-# Guarda el archivo xlsx con los cambios realizados
-df.to_excel('tu_archivo_modificado.xlsx', index=False)
 
 # Indicar el número de columna que deseas eliminar
-num_columna = 3
-num_columna17 = 17
-num_columna18 = 16
-num_columna19 = 15
+num_columna = 1
+num_columna2 = 1
+num_columna17 = 14
+num_columna18 = 15
+num_columna19 = 14
 
 # Eliminar la columnas
+
 ws.delete_cols(num_columna)
+ws.delete_cols(num_columna2)
 ws.delete_cols(num_columna17)
 ws.delete_cols(num_columna18)
 ws.delete_cols(num_columna19)
