@@ -9,7 +9,7 @@ from openpyxl.utils import get_column_letter
 from reportlab.lib.pagesizes import letter
 from reportlab.lib.units import inch
 from reportlab.pdfgen import canvas
-
+import re
 
 
 # Leer el archivo CSV
@@ -124,11 +124,15 @@ for idx, row in enumerate(ws.iter_rows(),1):
     for cell in row:
         cell.fill = fill
         
-# Poner el renglon de total en negritas
+# Poner el renglon de total en negritas y porcentajes negativos en rojo
 for idx, row in enumerate(ws.iter_rows(),1):
     if str(ws.cell(row=idx, column=4).value) == 'TOTAL':
         for cell in row:
             cell.font = Font(bold=True, name='Calibri', size=6)
+        if re.search("-", str(ws.cell(row=idx, column=15).value)):
+            ws.cell(row=idx, column=15).font = Font(color = "FF0000", name='Calibri', size=6, bold=True)
+    elif re.search("-", str(ws.cell(row=idx, column=15).value)):
+         ws.cell(row=idx, column=15).font = Font(color = "FF0000", name='Calibri', size=6)
 
 # Establecer color de relleno para los encabezados
 fill = PatternFill(start_color='BFBFBF', end_color='BFBFBF', fill_type='solid')
@@ -162,9 +166,8 @@ for celda in columna:
     if isinstance(celda.value, float):  # verifica si el valor de la celda es un decimal
         celda.value = celda.value * 1  # convierte el valor a porcentaje
         celda.number_format = '0%'  # establece el formato de número de la celda como porcentaje con dos decimales
-
-
-
+    if (re.search("-", str(celda.value))):
+        celda.value = str(int(celda.value * 100)).replace('-','(') + ')%'
 
 # Indicar el número de columna que deseas eliminar
 num_columna = 1
