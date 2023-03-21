@@ -72,8 +72,8 @@ for row_num, row_data in enumerate(df.values, 2):
         cell = ws.cell(row=row_num, column=col_num, value=cell_value)
         cell.font = cell_font
         cell.alignment = cell_alignment
-
-
+    if str(ws.cell(row=row_num, column=4).value) == 'nan':
+        ws.delete_rows(row_num)
 
 
 
@@ -109,16 +109,22 @@ for row_num, row_data in enumerate(df.values, 2):
 # definir los colores para los renglones
 color1 = 'F2F2F2'
 color2 = 'FFFFFF'
+change = False
+
 
 # cambiar el formato de color de los renglones 
-for idx, row in enumerate(ws.iter_rows(),4):
-    if idx % 2 == 0:
+for idx, row in enumerate(ws.iter_rows(),1):
+    if ((str(ws.cell(row=idx, column=3).value) == 'None') or (str(ws.cell(row=idx, column=4).value) == 'TOTAL')):
+        fill = PatternFill(start_color=color2, end_color=color2, fill_type='solid')
+        change = True              
+    elif change:
         fill = PatternFill(start_color=color1, end_color=color1, fill_type='solid')
+        change = False                    
     else:
         fill = PatternFill(start_color=color2, end_color=color2, fill_type='solid')
+        change = True
     for cell in row:
         cell.fill = fill
-
 
 # Establecer color de relleno para los encabezados
 fill = PatternFill(start_color='BFBFBF', end_color='BFBFBF', fill_type='solid')
@@ -173,5 +179,3 @@ ws.delete_cols(num_columna19)
 
 # Guardar el archivo
 wb.save('archivo.xlsx')
-
-
