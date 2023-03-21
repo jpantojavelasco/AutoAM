@@ -123,6 +123,12 @@ for idx, row in enumerate(ws.iter_rows(),1):
         change = True
     for cell in row:
         cell.fill = fill
+        
+# Poner el renglon de totales en negritas
+for idx, row in enumerate(ws.iter_rows(),1):
+    if str(ws.cell(row=idx, column=4).value) == 'TOTAL':
+        for cell in row:
+            cell.font = Font(bold=True, name='Calibri', size=6)
 
 # Establecer color de relleno para los encabezados
 fill = PatternFill(start_color='BFBFBF', end_color='BFBFBF', fill_type='solid')
