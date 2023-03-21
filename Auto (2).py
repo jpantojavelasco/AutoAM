@@ -124,7 +124,7 @@ for idx, row in enumerate(ws.iter_rows(),1):
     for cell in row:
         cell.fill = fill
         
-# Poner el renglon de totales en negritas
+# Poner el renglon de total en negritas
 for idx, row in enumerate(ws.iter_rows(),1):
     if str(ws.cell(row=idx, column=4).value) == 'TOTAL':
         for cell in row:
