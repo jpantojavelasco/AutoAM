@@ -137,19 +137,36 @@ for idx, row in enumerate(ws.iter_rows(),1):
 
 columnaP = ws['C']
 columnaU = ws['O']
+mexterior = Side(style = 'thin', color = 'BFBFBF')
 
 # Pintar los bordes verticales exteriores
 for celda in columnaP:
-    celda.border = Border(left = Side(style = 'thin', color = 'BFBFBF'))
+    celda.border = Border(left = mexterior)
 for celda in columnaU:
-    celda.border = Border(right = Side(style = 'thin', color = 'BFBFBF'))
+    celda.border = Border(right = mexterior)
 
 columnas = ['C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N']
+mnormal = Side(style = 'thin', color = 'F2F2F2')
+
 # Pintar los bordes verticales interiores
 for idx, value in enumerate(columnas,0):
     for idxcelda, celda in enumerate(ws[columnas[idx]],0):
         if idxcelda != 0:
-            celda.border = Border(right = Side(style = 'thin', color = 'F2F2F2'))
+            celda.border = Border(right = mnormal)
+
+    
+#Pintar los bordes totales
+
+for idx, row in enumerate(ws.iter_rows(),1):
+    if str(ws.cell(row=idx, column=4).value) == 'TOTAL':
+        for idxcell, celda in enumerate(row,1):
+            if re.search("Cell 'Sheet'.C", str(celda)):
+                celda.border = Border(top = mnormal, bottom = mnormal, left = mexterior, right = mnormal)
+            elif re.search("Cell 'Sheet'.O", str(celda)):
+                celda.border = Border(top = mnormal, bottom = mnormal, left = mnormal, right = mexterior)
+            else:
+                celda.border = Border(top = mnormal, bottom = mnormal, left = mnormal, right = mnormal)
+
 
 # Establecer color de relleno para los encabezados
 fill = PatternFill(start_color='BFBFBF', end_color='BFBFBF', fill_type='solid')
