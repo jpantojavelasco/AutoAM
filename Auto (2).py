@@ -3,6 +3,7 @@ import openpyxl
 from openpyxl import Workbook 
 from openpyxl.styles import Font, Alignment 
 from openpyxl.styles import PatternFill
+from openpyxl.styles import Border, Side
 from openpyxl import load_workbook
 from openpyxl.worksheet.page import PageMargins
 from openpyxl.utils import get_column_letter
@@ -133,6 +134,22 @@ for idx, row in enumerate(ws.iter_rows(),1):
             ws.cell(row=idx, column=15).font = Font(color = "FF0000", name='Calibri', size=6, bold=True)
     elif re.search("-", str(ws.cell(row=idx, column=15).value)):
          ws.cell(row=idx, column=15).font = Font(color = "FF0000", name='Calibri', size=6)
+
+columnaP = ws['C']
+columnaU = ws['O']
+
+# Pintar los bordes verticales exteriores
+for celda in columnaP:
+    celda.border = Border(left = Side(style = 'thin', color = 'BFBFBF'))
+for celda in columnaU:
+    celda.border = Border(right = Side(style = 'thin', color = 'BFBFBF'))
+
+columnas = ['C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N']
+# Pintar los bordes verticales interiores
+for idx, value in enumerate(columnas,0):
+    for idxcelda, celda in enumerate(ws[columnas[idx]],0):
+        if idxcelda != 0:
+            celda.border = Border(right = Side(style = 'thin', color = 'F2F2F2'))
 
 # Establecer color de relleno para los encabezados
 fill = PatternFill(start_color='BFBFBF', end_color='BFBFBF', fill_type='solid')
