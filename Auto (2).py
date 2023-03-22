@@ -59,8 +59,6 @@ for col_num, header_title in enumerate(headers, 3):
     cell.font = header_font
     cell.alignment = header_alignment
 
-
-
 # Justifica el texto de los encabezados
 for cell in ws[1]:
     cell.alignment = Alignment(horizontal='center', vertical='center', wrap_text=True)
